@@ -1,0 +1,71 @@
+%module(directors="1") stock
+
+%init %{
+  //printf("Initialization stock done.\n");
+%}
+
+%typemap(gotype) (char **ppSecurityID, int nCount) "[]string"
+
+%typemap(in) (char **ppSecurityID, int nCount)
+%{
+  {
+    int i;
+    _gostring_* a;
+
+    $2 = $input.len;
+    a = (_gostring_*) $input.array;
+    $1 = (char **) malloc (($2 + 1) * sizeof (char *));
+    for (i = 0; i < $2; i++) {
+      
+      /* Not work */
+      //_gostring_ *ps = &a[i];
+      //$1[i] = (char *) ps->p;
+      //$1[i][ps->n] = '\0';
+
+      /*Work well*/
+      _gostring_ *ps = &a[i];
+      $1[i] = (char*) malloc(ps->n + 1);
+      memcpy($1[i], ps->p, ps->n);
+      $1[i][ps->n] = '\0';
+
+    }
+    $1[i] = NULL;
+  }
+%}
+
+%typemap(argout) (char **ppSecurityID, int nCount) "" /* override char *[] default */
+
+%typemap(freearg) (char **ppSecurityID, int nCount)
+%{
+  {
+    int i;
+    for (i = 0; i < $2; i++)
+    {
+      free ($1[i]);
+    }
+    free($1);
+  }
+%}
+ 
+
+/* 在复杂的企业环境中，可能有一些 C/C++ 头文件定义了您希望向脚本框架公开的全局变量和常量。
+ * 在接口文件中使用 %include <header.h> 和 %{ #include <header.h> %}，可解决在头文件中重复所有元素的声明的问题。
+ * 有一点值得注意，在MSVC中，32位环境（当然是说跑的Intel 兼容CPU的PC）预定义宏_WIN32，但64位环境同时预定义了_WIN32和_WIN64。
+ */
+
+/* Includes the header files in the wrapper code */
+%header %{
+#include "./api/tradestockapi_v4.0.8_20230627/TORATstpUserApiDataType.h"
+#include "./api/tradestockapi_v4.0.8_20230627/TORATstpUserApiStruct.h"
+#include "./api/tradestockapi_v4.0.8_20230627/TORATstpTraderApi.h"
+%}
+
+/* Parse the header files to generate wrappers */
+%include "std_string.i"
+
+%feature("director") TORASTOCKAPI_CTORATstpTraderApi;
+%feature("director") TORASTOCKAPI_CTORATstpTraderSpi;
+
+%include "./api/tradestockapi_v4.0.8_20230627/TORATstpUserApiDataType.h"
+%include "./api/tradestockapi_v4.0.8_20230627/TORATstpUserApiStruct.h"
+%include "./api/tradestockapi_v4.0.8_20230627/TORATstpTraderApi.h"
