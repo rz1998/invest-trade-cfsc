@@ -1,0 +1,65 @@
+%module(directors="1") xmd
+
+%init %{
+  //printf("Initialization xmd done.\n");
+%}
+
+%typemap(gotype) (char **ppSecurityID, int nCount) "[]string"
+
+%typemap(in) (char **ppSecurityID, int nCount)
+%{
+  {
+    int i;
+    _gostring_* a;
+
+    $2 = $input.len;
+    a = (_gostring_*) $input.array;
+    $1 = (char **) malloc (($2 + 1) * sizeof (char *));
+    for (i = 0; i < $2; i++) {
+      
+      /* Not work */
+      //_gostring_ *ps = &a[i];
+      //$1[i] = (char *) ps->p;
+      //$1[i][ps->n] = '\0';
+
+      /*Work well*/
+      _gostring_ *ps = &a[i];
+      $1[i] = (char*) malloc(ps->n + 1);
+      memcpy($1[i], ps->p, ps->n);
+      $1[i][ps->n] = '\0';
+
+    }
+    $1[i] = NULL;
+  }
+%}
+
+%typemap(argout) (char **ppSecurityID, int nCount) "" /* override char *[] default */
+
+%typemap(freearg) (char **ppSecurityID, int nCount)
+%{
+  {
+    int i;
+    for (i = 0; i < $2; i++)
+    {
+      free ($1[i]);
+    }
+    free($1);
+  }
+%}
+
+/* Includes the header files in the wrapper code */
+%header %{
+#include "./api/xfastmdapi_v1.0.5_20230210/TORATstpXMdApiDataType.h"
+#include "./api/xfastmdapi_v1.0.5_20230210/TORATstpXMdApiStruct.h"
+#include "./api/xfastmdapi_v1.0.5_20230210/TORATstpXMdApi.h"
+%}
+
+/* Parse the header files to generate wrappers */
+%include "std_string.i"
+
+%feature("director") TORALEV1API_CTORATstpXMdApi;
+%feature("director") TORALEV1API_CTORATstpXMdSpi;
+
+%include "./api/xfastmdapi_v1.0.5_20230210/TORATstpXMdApiDataType.h"
+%include "./api/xfastmdapi_v1.0.5_20230210/TORATstpXMdApiStruct.h"
+%include "./api/xfastmdapi_v1.0.5_20230210/TORATstpXMdApi.h"
