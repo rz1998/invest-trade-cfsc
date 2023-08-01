@@ -1,6 +1,7 @@
-package internal
+package config
 
 type ConfStock struct {
+	UrlFrontTrade     string
 	UserID            string
 	Password          string
 	InvestorID        string

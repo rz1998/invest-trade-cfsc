@@ -1,7 +1,7 @@
-%module(directors="1") stock
+%module(directors="1") credit
 
 %init %{
-  //printf("Initialization stock done.\n");
+  //printf("Initialization credit done.\n");
 %}
 
 %typemap(gotype) (char **ppSecurityID, int nCount) "[]string"
@@ -55,17 +55,17 @@
 
 /* Includes the header files in the wrapper code */
 %header %{
-#include "./api/tradestockapi_v4.0.8_20230627/TORATstpUserApiDataType.h"
-#include "./api/tradestockapi_v4.0.8_20230627/TORATstpUserApiStruct.h"
-#include "./api/tradestockapi_v4.0.8_20230627/TORATstpTraderApi.h"
+#include "./api/tradecreditapi_v2.0.7_20230223/TORATstpCreditUserApiDataType.h"
+#include "./api/tradecreditapi_v2.0.7_20230223/TORATstpCreditUserApiStruct.h"
+#include "./api/tradecreditapi_v2.0.7_20230223/TORATstpCreditTraderApi.h"
 %}
 
 /* Parse the header files to generate wrappers */
 %include "std_string.i"
 
-%feature("director") TORASTOCKAPI::CTORATstpTraderApi;
-%feature("director") TORASTOCKAPI::CTORATstpTraderSpi;
+%feature("director") TORACREDITAPI::CTORATstpTraderApi;
+%feature("director") TORACREDITAPI::CTORATstpTraderSpi;
 
-%include "./api/tradestockapi_v4.0.8_20230627/TORATstpUserApiDataType.h"
-%include "./api/tradestockapi_v4.0.8_20230627/TORATstpUserApiStruct.h"
-%include "./api/tradestockapi_v4.0.8_20230627/TORATstpTraderApi.h"
+%include "./api/tradecreditapi_v2.0.7_20230223/TORATstpCreditUserApiDataType.h"
+%include "./api/tradecreditapi_v2.0.7_20230223/TORATstpCreditUserApiStruct.h"
+%include "./api/tradecreditapi_v2.0.7_20230223/TORATstpCreditTraderApi.h"

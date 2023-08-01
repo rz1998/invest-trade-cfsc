@@ -1,0 +1,120 @@
+%module(directors="1") lv2md
+typedef double pdouble;
+%typemap(gotype) (TORALEV2API::TTORATstpMKSubTypesType const &mkSubTypes) "string"
+
+%typemap(directorin) (TORALEV2API::TTORATstpMKSubTypesType const &mkSubTypes)
+%{
+  {
+    $input = Swig_AllocateString((char*)$1, $1 ? strlen((char*)$1) : 0);
+  }
+%}
+
+%typemap(gotype) (char *ppSecurityID[], int nCount) "[]string"
+
+%typemap(directorin) (char *ppSecurityID[], int nCount)
+%{
+  {
+    *(char ***)&$input = (char **)$1;
+  }
+%}
+%typemap(in) (char *ppSecurityID[], int nCount)
+%{
+  {
+    int i;
+    _gostring_* a;
+
+    $2 = $input.len;
+    a = (_gostring_*) $input.array;
+    $1 = (char **) malloc (($2 + 1) * sizeof (char *));
+    for (i = 0; i < $2; i++) {
+      _gostring_ *ps = &a[i];
+      $1[i] = (char*) malloc(ps->n + 1);
+      memcpy($1[i], ps->p, ps->n);
+      $1[i][ps->n] = '\0';
+    }
+    $1[i] = NULL;
+  }
+%}
+/*
+%typemap(directorin) (char *ppSecurityID[], int nCount)
+%{
+  {
+    *(char ***)&$input = (char **)&$1;
+  }
+%}
+*/
+%typemap(argout) (char *ppSecurityID[], int nCount) "" /* override char *[] default */
+
+%typemap(freearg) (char *ppSecurityID[], int nCount)
+%{
+    free($1);
+%}
+
+%typemap(gotype) (int const FirstLevelBuyNum, int const FirstLevelBuyOrderVolumes[]) "[]int64"
+
+%typemap(in) (int const FirstLevelBuyNum, int const FirstLevelBuyOrderVolumes[])
+%{
+  {
+      int i;
+      intgo* a;
+      int** pp;
+
+      $1 = $input.len;
+      a = (intgo*) $input.array;
+      pp = (int **) malloc ($1 * sizeof (int *));
+      for (i = 0; i < $1; i++) {
+        intgo *ps = &a[i];
+        pp[i] = (int *) ps;
+      }
+      $2 = *pp;
+    }
+%}
+%typemap(directorin) (int const FirstLevelBuyNum, int const FirstLevelBuyOrderVolumes[])
+%{
+  {
+    *(int ***)&$input = (int **)&$2;
+  }
+%}
+%typemap(gotype) (int const FirstLevelSellNum, int const FirstLevelSellOrderVolumes[]) "[]int64"
+
+%typemap(in) (int const FirstLevelSellNum, int const FirstLevelSellOrderVolumes[])
+%{
+  {
+      int i;
+      intgo* a;
+      int** pp;
+
+      $1 = $input.len;
+      a = (intgo*) $input.array;
+      pp = (int **) malloc ($1 * sizeof (int *));
+      for (i = 0; i < $1; i++) {
+        intgo *ps = &a[i];
+        pp[i] = (int *) ps;
+      }
+      $2 = *pp;
+    }
+%}
+%typemap(directorin) (int const FirstLevelSellNum, int const FirstLevelSellOrderVolumes[])
+%{
+  {
+    *(int ***)&$input = (int **)&$2;
+  }
+%}
+
+/* Parse the header files to generate wrappers */
+%include "std_string.i"
+
+/* Includes the header files in the wrapper code */
+%header %{
+#include "./api/lv2md_v4.0.6_20230213/TORATstpLev2ApiDataType.h"
+#include "./api/lv2md_v4.0.6_20230213/TORATstpLev2ApiStruct.h"
+#include "./api/lv2md_v4.0.6_20230213/TORATstpLev2MdApi.h"
+#include <stdio.h>
+%}
+
+%feature("director") TORALEV2API::CTORATstpLev2MdApi;
+%feature("director") TORALEV2API::CTORATstpLev2MdSpi;
+
+%include "./api/lv2md_v4.0.6_20230213/TORATstpLev2ApiDataType.h"
+%include "./api/lv2md_v4.0.6_20230213/TORATstpLev2ApiStruct.h"
+%include "./api/lv2md_v4.0.6_20230213/TORATstpLev2MdApi.h"

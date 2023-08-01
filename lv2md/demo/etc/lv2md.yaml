@@ -1,0 +1,17 @@
+NeedCache: false
+Account:
+Password:
+UserProductInfo: demoGO
+CpuCores:
+# 订阅方式
+TypeSub: 0
+# 订阅-非组播
+UrlFront: tcp://210.14.72.17:6900
+# 订阅-组播
+UrlMulticast:
+  - udp://224.3.9.110:34567
+IpInterface: 127.0.0.1
+IpSource: 127.0.0.1
+NameInterface: enp101s0f1
+Capacity: 4096
+EFVI: true

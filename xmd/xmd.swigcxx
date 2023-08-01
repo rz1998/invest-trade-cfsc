@@ -16,18 +16,10 @@
     a = (_gostring_*) $input.array;
     $1 = (char **) malloc (($2 + 1) * sizeof (char *));
     for (i = 0; i < $2; i++) {
-      
-      /* Not work */
-      //_gostring_ *ps = &a[i];
-      //$1[i] = (char *) ps->p;
-      //$1[i][ps->n] = '\0';
-
-      /*Work well*/
       _gostring_ *ps = &a[i];
       $1[i] = (char*) malloc(ps->n + 1);
       memcpy($1[i], ps->p, ps->n);
       $1[i][ps->n] = '\0';
-
     }
     $1[i] = NULL;
   }
@@ -57,8 +49,8 @@
 /* Parse the header files to generate wrappers */
 %include "std_string.i"
 
-%feature("director") TORALEV1API_CTORATstpXMdApi;
-%feature("director") TORALEV1API_CTORATstpXMdSpi;
+%feature("director") TORALEV1API::CTORATstpXMdApi;
+%feature("director") TORALEV1API::CTORATstpXMdSpi;
 
 %include "./api/xfastmdapi_v1.0.5_20230210/TORATstpXMdApiDataType.h"
 %include "./api/xfastmdapi_v1.0.5_20230210/TORATstpXMdApiStruct.h"
